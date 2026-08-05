@@ -4,6 +4,7 @@ import com.example.JobHub.auth.dto.*;
 import com.example.JobHub.auth.entity.*;
 import com.example.JobHub.auth.repository.*;
 import com.example.JobHub.auth.service.AuthService;
+import com.example.JobHub.email.service.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
     private final long accessTokenExpirationMinutes;
     private final long refreshTokenExpirationDays;
 
@@ -32,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
             PasswordResetTokenRepository passwordResetTokenRepository,
             BCryptPasswordEncoder passwordEncoder,
             JwtTokenProvider jwtTokenProvider,
+            EmailService emailService,
             @Value("${jwt.access-token-expiration-minutes}") long accessTokenExpirationMinutes,
             @Value("${jwt.refresh-token-expiration-days}") long refreshTokenExpirationDays) {
         this.userRepository = userRepository;
@@ -40,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.emailService = emailService;
         this.accessTokenExpirationMinutes = accessTokenExpirationMinutes;
         this.refreshTokenExpirationDays = refreshTokenExpirationDays;
     }
@@ -58,6 +62,8 @@ public class AuthServiceImpl implements AuthService {
 
         EmailVerificationToken token = createEmailVerificationToken(user);
         emailVerificationTokenRepository.save(token);
+
+        emailService.sendVerificationEmail(user.getEmail(), user.getEmail(), token.getToken());
 
         return new AuthResponse(null, null, user.getId(), user.getEmail());
     }
@@ -132,11 +138,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void forgotPassword(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
-                .orElseThrow(() -> new IllegalArgumentException("Email address not found"));
-
-        PasswordResetToken resetToken = createPasswordResetToken(user);
-        passwordResetTokenRepository.save(resetToken);
+        userRepository.findByEmail(request.getEmail().toLowerCase())
+                .ifPresent(user -> {
+                    PasswordResetToken resetToken = createPasswordResetToken(user);
+                    passwordResetTokenRepository.save(resetToken);
+                    emailService.sendPasswordResetEmail(user.getEmail(), user.getEmail(), resetToken.getToken());
+                });
     }
 
     @Override
@@ -154,6 +161,8 @@ public class AuthServiceImpl implements AuthService {
 
         resetToken.setUsed(true);
         passwordResetTokenRepository.save(resetToken);
+
+        emailService.sendPasswordChangedEmail(user.getEmail(), user.getEmail());
     }
 
     private EmailVerificationToken createEmailVerificationToken(User user) {

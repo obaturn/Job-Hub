@@ -1,0 +1,27 @@
+# Backend - JobHub
+JobHub/target/
+JobHub/.mvn/wrapper/maven-wrapper.jar
+JobHub/HELP.md
+JobHub/.gitattributes
+
+# Frontend - React
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Application secrets
+**/application.properties
+**/application.yml
+
+# IDE
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db

@@ -12,6 +12,8 @@ public interface AuthService {
 
     void verifyEmail(VerifyEmailRequest request);
 
+    void resendVerification(ResendVerificationRequest request);
+
     AuthResponse refreshToken(RefreshTokenRequest request);
 
     void forgotPassword(ForgotPasswordRequest request);

@@ -1,16 +1,36 @@
-# React + Vite
+# JobHub frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The JobHub frontend is a React 19 and Vite application for the Phase 1.2 authentication experience.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Create a `.env` file when the API is not running on the default port:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+VITE_API_BASE_URL=http://localhost:8080
+```
 
-## Expanding the Oxlint configuration
+## Available routes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- `/` — JobHub landing page
+- `/register` — registration
+- `/verify-email/pending` — verification waiting state
+- `/verify-email?token=...` — token-driven email verification
+- `/login` — login and Remember Me
+- `/forgot-password` — password recovery request
+- `/reset-password?token=...` — token-driven password reset
+- `/profile/setup` — protected Phase 1.3 placeholder
+
+The frontend keeps the access token in memory and sends credentialed requests so the backend can manage the refresh-token cookie. The API must allow credentialed CORS from the frontend origin.
+
+## Validation
+
+```bash
+npm run lint
+npm run build
+```

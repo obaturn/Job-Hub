@@ -31,5 +31,8 @@ public class RefreshToken {
     private boolean revoked = false;
 
     @Column(nullable = false)
+    private boolean rememberMe = true;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

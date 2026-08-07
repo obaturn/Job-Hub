@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 public final class AuthMapper {
 
     public static AuthResponse toAuthResponse(String accessToken, String refreshToken, User user) {
-        return new AuthResponse(accessToken, refreshToken, user.getId(), user.getEmail());
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                false);
     }
 }

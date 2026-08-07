@@ -292,4 +292,57 @@ class AuthIntegrationTest {
         assertThat(claims.getSubject()).isEqualTo(String.valueOf(userId));
         assertThat(claims.get("email", String.class)).isEqualTo(email);
     }
+
+    @Test
+    @Order(16)
+    void register_ShouldPersistFirstAndLastName() {
+        RegisterRequest request = createRegisterRequest("names@example.com", "Password123!");
+        request.setFirstName("Amara");
+        request.setLastName("Okafor");
+
+        authService.register(request);
+
+        User user = userRepository.findByEmail("names@example.com").orElse(null);
+        assertThat(user).isNotNull();
+        assertThat(user.getFirstName()).isEqualTo("Amara");
+        assertThat(user.getLastName()).isEqualTo("Okafor");
+    }
+
+    @Test
+    @Order(17)
+    void resendVerification_ShouldInvalidatePreviousTokens() {
+        registerUser("resend@example.com", "Password123!");
+        User user = userRepository.findByEmail("resend@example.com").orElseThrow();
+        String oldToken = emailVerificationTokenRepository.findByUser_Id(user.getId()).get(0).getToken();
+
+        ResendVerificationRequest request = new ResendVerificationRequest();
+        request.setEmail("resend@example.com");
+        authService.resendVerification(request);
+
+        EmailVerificationToken oldTokenEntity = emailVerificationTokenRepository.findByToken(oldToken).orElseThrow();
+        assertThat(oldTokenEntity.isUsed()).isTrue();
+        assertThat(emailVerificationTokenRepository.findByUser_Id(user.getId()))
+                .anyMatch(token -> !token.isUsed());
+    }
+
+    @Test
+    @Order(18)
+    void login_ShouldRespectRememberMeRefreshDuration() {
+        registerUser("remember@example.com", "Password123!");
+        verifyEmail("remember@example.com");
+
+        LoginRequest shortSession = createLoginRequest("remember@example.com", "Password123!");
+        shortSession.setRememberMe(false);
+        AuthResponse shortResponse = authService.login(shortSession);
+        RefreshToken shortToken = refreshTokenRepository.findByToken(shortResponse.getRefreshToken()).orElseThrow();
+        assertThat(shortToken.isRememberMe()).isFalse();
+        assertThat(shortToken.getExpiresAt()).isAfter(java.time.LocalDateTime.now().plusHours(23));
+
+        LoginRequest longSession = createLoginRequest("remember@example.com", "Password123!");
+        longSession.setRememberMe(true);
+        AuthResponse longResponse = authService.login(longSession);
+        RefreshToken longToken = refreshTokenRepository.findByToken(longResponse.getRefreshToken()).orElseThrow();
+        assertThat(longToken.isRememberMe()).isTrue();
+        assertThat(longToken.getExpiresAt()).isAfter(java.time.LocalDateTime.now().plusDays(29));
+    }
 }

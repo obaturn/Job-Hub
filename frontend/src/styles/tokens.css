@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+:root {
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f7f8f5;
+  --surface-warm: #fffaf6;
+  --surface-dark: #042b19;
+  --surface-darker: #022313;
+  --ink: #050505;
+  --ink-muted: #5f6862;
+  --ink-faint: #98a39a;
+  --border: #e5e8e4;
+  --border-dark: rgba(191, 213, 197, 0.25);
+  --forest-950: #042b19;
+  --forest-900: #063a22;
+  --forest-800: #0b4d2d;
+  --forest-700: #11633b;
+  --forest-muted: #92aa99;
+  --orange-500: #ff5b0a;
+  --orange-600: #ef4b00;
+  --orange-soft: #fff0e8;
+  --sage-line: rgba(187, 205, 191, 0.48);
+  --success: #168b67;
+  --success-soft: #e6f6f0;
+  --danger: #c43d4b;
+  --danger-soft: #fff0f1;
+  --shadow-soft: 0 18px 50px rgba(4, 43, 25, 0.13);
+  --shadow-card: 0 10px 26px rgba(4, 43, 25, 0.08);
+  --shadow-float: 0 22px 50px rgba(4, 43, 25, 0.18);
+  --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --content-width: 1180px;
+  --radius-sm: 8px;
+  --radius-button: 12px;
+  --radius-card: 18px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --focus-ring: 0 0 0 4px rgba(255, 91, 10, 0.18);
+  --motion-fast: 160ms ease;
+  --motion-base: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-slow: 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
